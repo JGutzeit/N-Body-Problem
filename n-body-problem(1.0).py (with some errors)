@@ -23,7 +23,7 @@ d2 = 5 # Der Durchmesser der Masse 2
 m2 = 70 # Die Masse 2 (in KG)
 vx2 = 0 # Die Anfangs Geschwindigkeit auf der X Achse der Masse 2
 vy2 = 6000 # Die Anfangs Geschwindigkeit auf der Y Achse der Masse 2
-x2 = 300000 +(d1*0.5) # Die Anfangs Position der Masse 2 (auf der X Achse)
+x2 = 300000  # Die Anfangs Position der Masse 2 (auf der X Achse)
 y2 = 0 # Die Anfangs Position der Masse 2 (auf der Y Achse)
 
 d3 = 109 # Der Durchmesser der Masse 3
