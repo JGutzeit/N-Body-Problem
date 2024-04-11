@@ -43,8 +43,8 @@ Y2_Achse=[]
 Y3_Achse=[]
 anzahl_intervalle=0
 r12 = math.sqrt(((x1-x2)**2)+((y1-y2)**2)) # Entfernung der Masse 1 und 2
-r13 = math.sqrt(((x1-x3)**2)+ ((y1-y2)**2)) # Entfernung der Masse 1 und 3
-r23 = math.sqrt(((x2-x3)**2)+((y1-y2)**2)) # Entfernung der Masse 2 und 3
+r13 = math.sqrt(((x1-x3)**2)+ ((y1-y3)**2)) # Entfernung der Masse 1 und 3
+r23 = math.sqrt(((x2-x3)**2)+((y3-y2)**2)) # Entfernung der Masse 2 und 3
 
 Anzahl_simulations_schritte = int(Simulierte_Zeit / simuliertes_intervall)
 dt= simuliertes_intervall.total_seconds()
@@ -58,8 +58,8 @@ for i in tqdm(range(Anzahl_simulations_schritte)):
         anzahl_intervalle+=dt
     
         r12 = math.sqrt(((x1-x2)**2) + ((y1-y2)**2))
-        r13 = math.sqrt(((x1-x3)**2) + ((y1-y2)**2))
-        r23 = math.sqrt(((x2-x3)**2) + ((y1-y2)**2))
+        r13 = math.sqrt(((x1-x3)**2) + ((y1-y3)**2))
+        r23 = math.sqrt(((x2-x3)**2) + ((y3-y2)**2))
     
         Fmx1= (-(G*m1*m2*(x1-x2))/(r12**3)) + (-(G*m1*m3*(x1-x3))/(r13**3)) # Gesamte Kraft die auf der X Achse auf die Masse 1 einwirkt
         Fmx2= (-(G*m2*m1*(x2-x1))/(r12**3)) + (-(G*m2*m3*(x2-x3))/(r23**3)) # Gesamte Kraft die auf der X Achse auf die Masse 2 einwirkt
