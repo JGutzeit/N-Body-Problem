@@ -1,0 +1,117 @@
+import math
+import matplotlib.pyplot as plt
+import time
+from datetime import timedelta
+from tqdm import tqdm
+
+
+Simulierte_Zeit = timedelta(days=360)
+
+print(f"Simulierte_Zeit: {Simulierte_Zeit}")
+
+simuliertes_intervall = timedelta(seconds=1)
+
+G=6.6730*10**-11
+
+d1= 12742000
+m1= 5.972*10**24  # Erde
+vx1= 0 # um die sonne
+vy1= 29722.222
+x1= 149597870000 # von der sonne
+y1= 0
+
+d2= 1392700000
+m2= 1.989 *10**30 # Sonne
+vx2= 0
+vy2= 0
+x2= 0
+y2= 0
+
+d3= 3474800 # Mond
+m3= 7.3 *10**22
+vx3= 0
+vy3= 1023
+x3= 149636270000
+y3= 0
+
+
+X1_Achse=[]
+X2_Achse=[]
+X3_Achse=[]
+Y1_Achse=[]
+Y2_Achse=[]
+Y3_Achse=[]
+anzahl_intervalle=0
+r12 = math.sqrt(((x1-x2)**2)+((y1-y2)**2))
+r13 = math.sqrt(((x1-x3)**2)+ ((y1-y2)**2))
+r23 = math.sqrt(((x2-x3)**2)+((y1-y2)**2))
+
+Anzahl_simulations_schritte = int(Simulierte_Zeit / simuliertes_intervall)
+dt= simuliertes_intervall.total_seconds()
+
+for i in tqdm(range(Anzahl_simulations_schritte)):
+    
+    if r12<=(d1+d2)*0.5 or r13<=(d1+d3)*0.5 or r23<=(d2+d3)*0.5:
+        print("Kollision bei anzahl intervalle =",anzahl_intervalle)
+        break
+    else:
+        anzahl_intervalle+=dt
+    
+        r12 = math.sqrt(((x1-x2)**2) + ((y1-y2)**2))
+        r13 = math.sqrt(((x1-x3)**2) + ((y1-y2)**2))
+        r23 = math.sqrt(((x2-x3)**2) + ((y1-y2)**2))
+    
+        Fmx1= (-(G*m1*m2*(x1-x2))/(r12**3)) + (-(G*m1*m3*(x1-x3))/(r13**3))
+        Fmx2= (-(G*m2*m1*(x2-x1))/(r12**3)) + (-(G*m2*m3*(x2-x3))/(r23**3))
+        Fmx3= (-(G*m3*m1*(x3-x1))/(r13**3)) + (-(G*m3*m2*(x3-x2))/(r23**3))
+        
+        Fmy1= (-(G*m1*m2*(y1-y2))/(r12**3)) + (-(G*m1*m3*(y1-y3))/(r13**3))
+        Fmy2= (-(G*m2*m1*(y2-y1))/(r12**3)) + (-(G*m1*m3*(y1-y3))/(r23**3))
+        Fmy3= (-(G*m3*m1*(y3-y1))/(r13**3)) + (-(G*m1*m3*(y1-y3))/(r23**3))
+            
+        amx1 =Fmx1/m1
+        amx2 =Fmx2/m2
+        amx3 =Fmx3/m3
+        amy1 =Fmy1/m1
+        amy2 =Fmy2/m2
+        amy3 =Fmy3/m3
+    
+        vx1 =vx1+ amx1*dt
+        vx2 =vx2+ amx2*dt
+        vx3 =vx3+ amx3*dt
+        vy1 =vy1+ amy1*dt
+        vy2 =vy2+ amy2*dt
+        vy3 =vy3+ amy3*dt
+    
+        x1=x1+ vx1*dt
+        x2=x2+vx2*dt
+        x3=x3+vx3*dt
+        y1=y1+vy1*dt
+        y2=y2+vy2*dt
+        y3=y3+vy3*dt
+    
+        X1_Achse.append(x1)
+        X2_Achse.append(x2)
+        X3_Achse.append(x3)
+        Y1_Achse.append(y1)
+        Y2_Achse.append(y2)
+        Y3_Achse.append(y3)
+        
+    
+    
+plt.plot(X1_Achse, Y1_Achse, label="erde", color="blue")
+plt.plot(X2_Achse, Y2_Achse, label="ich", color="red")
+plt.plot(X3_Achse, Y3_Achse, label="iss", color="green")
+plt.axhline(0, color="black", linewidth=0.5)
+plt.axvline(0, color="black", linewidth=0.5)
+plt.title("several-body-problem")
+plt.xlabel("X (m)")
+plt.ylabel("Y (m)")
+plt.gca().axis("equal")
+plt.grid()
+plt.legend()
+plt.show()
+
+
+
+
