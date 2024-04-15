@@ -1,0 +1,150 @@
+import math
+import matplotlib.pyplot as plt
+import time
+from datetime import timedelta
+from tqdm import tqdm
+from mpl_toolkits.mplot3d import Axes3D
+
+Simulierte_Zeit = timedelta(days=360) # Simulierte Zeit (gerne veränderbar)
+
+print(f"Simulierte_Zeit: {Simulierte_Zeit}")
+
+simuliertes_intervall = timedelta(seconds=1)
+
+G=6.6730*10**-11 # Gravitationskonstante
+
+d1= 12742000 # Durchmesser der Masse 1
+m1= 5.972*10**24 # Masse 1
+vx1= 0 # Anfangs Geschwindigkeit der Masse 1 auf der X Achse
+vy1= 29722.222 # Anfangs Geschwindigkeit der Masse 1 auf der Y Achse
+vz1= 0 # Anfangs Geschwindigkeit der Masse 1 auf der Z Achse
+x1= 149597870000 # Anfangs Position der Masse 1 auf der X Achse
+y1= 0 # Anfangs Position der Masse 1 auf der X Achse
+z1= 0 # Anfangs Position der Masse 1 auf der Z Achse
+
+d2= 1392700000 # Durchmesser der Masse 2
+m2= 1.989 *10**30 # Masse 2
+vx2= 0 # Anfangs Geschwindigkeit der Masse 2 auf der X Achse
+vy2= 0 # Anfangs Geschwindigkeit der Masse 2 auf der Y Achse
+vz2= 0 # Anfangs Geschwindigkeit der Masse 2 auf der Z Achse
+x2= 0 # Anfangs Position der Masse 2 auf der X Achse
+y2= 0 # Anfangs Position der Masse 2 auf der Y Achse
+z2= 0  # Anfangs Position der Masse 2 auf der Z Achse
+
+d3= 3474800 # Durchmesser der Masse 3
+m3= 7.3 *10**22 # Masse 3
+vx3= 0 # Anfangs Geschwindigkeit der Masse 3 auf der X Achse
+vy3= 1023 # Anfangs Geschwindigkeit der Masse 3 auf der Y Achse
+vz3= 0 # Anfangs Geschwindigkeit der Masse 3 auf der Z Achse
+x3= 149636270000 # Anfangs Position der Masse 3 auf der X Achse
+y3= 0 # Anfangs Position der Masse 3 auf der Y Achse
+z3= 0 # Anfangs Position der Masse 3 auf der Z Achse
+
+X1_Achse=[]
+X2_Achse=[]
+X3_Achse=[]
+Y1_Achse=[]
+Y2_Achse=[]
+Y3_Achse=[]
+Z1_Achse=[]
+Z2_Achse=[]
+Z3_Achse=[]
+
+anzahl_intervalle=0
+
+r12 = math.sqrt(((x1-x2)**2)+((y1-y2)**2)+((z1-z2)**2)) # Entfernung der Masse 1 und 2
+r13 = math.sqrt(((x1-x3)**2)+ ((y1-y3)**2)+((z3-z1)**2)) # Entfernung der Masse 1 und 3
+r23 = math.sqrt(((x2-x3)**2)+((y3-y2)**2)+((z3-z2)**2)) # Entfernung der Masse 2 und 3
+
+Anzahl_simulations_schritte = int(Simulierte_Zeit / simuliertes_intervall)
+
+dt= simuliertes_intervall.total_seconds()
+for i in tqdm(range(Anzahl_simulations_schritte)):
+    
+    if r12<=(d1+d2)*0.5 or r13<=(d1+d3)*0.5 or r23<=(d2+d3)*0.5: # Wenn bei einem der Massen eine Superposition entsteht Kollision entdeckt
+        
+        print("Kollision bei anzahl intervalle =",anzahl_intervalle)
+        break
+    else:
+        anzahl_intervalle+=dt
+        r12 = math.sqrt(((x1-x2)**2)+((y1-y2)**2)+((z1-z2)**2)) # Entfernung der Masse 1 und 2
+        r13 = math.sqrt(((x1-x3)**2)+ ((y1-y3)**2)+((z3-z1)**2)) # Entfernung der Masse 1 und 3
+        r23 = math.sqrt(((x2-x3)**2)+((y3-y2)**2)+((z3-z2)**2)) # Entfernung der Masse 2 und 3
+        
+        Fmx1= (-(G*m1*m2*(x1-x2))/(r12**3)) + (-(G*m1*m3*(x1-x3))/(r13**3)) # Gesamte Kraft die auf der X Achse auf die Masse 1 einwirkt
+        Fmx2= (-(G*m2*m1*(x2-x1))/(r12**3)) + (-(G*m2*m3*(x2-x3))/(r23**3)) # Gesamte Kraft die auf der X Achse auf die Masse 2 einwirkt
+        Fmx3= (-(G*m3*m1*(x3-x1))/(r13**3)) + (-(G*m3*m2*(x3-x2))/(r23**3)) # Gesamte Kraft die auf der X Achse auf die Masse 3 einwirkt
+        
+        Fmy1= (-(G*m1*m2*(y1-y2))/(r12**3)) + (-(G*m1*m3*(y1-y3))/(r13**3)) # Gesamte Kraft die auf der Y Achse auf die Masse 1 einwirkt
+        Fmy2= (-(G*m2*m1*(y2-y1))/(r12**3)) + (-(G*m2*m3*(y2-y3))/(r23**3)) # Gesamte Kraft die auf der Y Achse auf die Masse 2 einwirkt
+        Fmy3= (-(G*m3*m1*(y3-y1))/(r13**3)) + (-(G*m2*m3*(y2-y3))/(r23**3)) # Gesamte Kraft die auf der Y Achse auf die Masse 3 einwirk
+        
+        Fmz1 = (-(G*m1*m2*(z1-z2))/(r12**3)) + (-(G*m1*m3*(z1-z3))/(r13**3)) # Gesamte Kraft die auf der Z Achse auf die Masse 1 einwirkt
+        Fmz2 = (-(G*m2*m1*(z2-z1))/(r12**3)) + (-(G*m2*m3*(z2-z3))/(r23**3)) # Gesamte Kraft die auf der Z Achse auf die Masse 2 einwirkt
+        Fmz3 = (-(G*m3*m1*(z3-z1))/(r13**3)) + (-(G*m2*m3*(z2-z3))/(r23**3)) # Gesamte Kraft die auf der Z Achse auf die Masse 3 einwirkt
+        
+        amx1 =Fmx1/m1 # Beschleunigung (auf X Achse) der Masse 1
+        amx2 =Fmx2/m2 # Beschleunigung (auf X Achse) der Masse 2
+        amx3 =Fmx3/m3 # Beschleunigung (auf X Achse) der Masse 3
+        
+        amy1 =Fmy1/m1 # Beschleunigung (auf Y Achse) der Masse 1
+        amy2 =Fmy2/m2 # Beschleunigung (auf Y Achse) der Masse 2
+        amy3 =Fmy3/m3 # Beschleunigung (auf Y Achse) der Masse 3
+        
+        amz1 =Fmz1/m1 # Beschleunigung (auf Z Achse) der Masse 1
+        amz2 =Fmz2/m2 # Beschleunigung (auf Z Achse) der Masse 2
+        amz3 =Fmz3/m3 # Beschleunigung (auf Z Achse) der Masse 3
+        
+        vx1 =vx1+ amx1*dt # Neue Geschwindigkeit ( auf der X Achse) der Masse 1
+        vx2 =vx2+ amx2*dt # Neue Geschwindigkeit ( auf der X Achse) der Masse 2
+        vx3 =vx3+ amx3*dt # Neue Geschwindigkeit ( auf der X Achse) der Masse 3
+        
+        vy1 =vy1+ amy1*dt # Neue Geschwindigkeit ( auf der Y Achse) der Masse 1
+        vy2 =vy2+ amy2*dt # Neue Geschwindigkeit ( auf der Y Achse) der Masse 2
+        vy3 =vy3+ amy3*dt # Neue Geschwindigkeit ( auf der Y Achse) der Masse 3
+        
+        vz1 =vz1+ amz1*dt # Neue Geschwindigkeit ( auf der Z Achse) der Masse 1
+        vz2 =vz2+ amz2*dt # Neue Geschwindigkeit ( auf der Z Achse) der Masse 2
+        vz3 =vz3+ amz3*dt # Neue Geschwindigkeit ( auf der Z Achse) der Masse 3
+        
+        x1=x1+vx1*dt # Neue Position der Masse 1 auf der X Achse 
+        x2=x2+vx2*dt # Neue Position der Masse 2 auf der X Achse 
+        x3=x3+vx3*dt # Neue Position der Masse 3 auf der X Achse
+        
+        y1=y1+vy1*dt # Neue Position der Masse 1 auf der Y Achse 
+        y2=y2+vy2*dt # Neue Position der Masse 2 auf der Y Achse 
+        y3=y3+vy3*dt # Neue Position der Masse 3 auf der Y Achse
+        
+        z1=z1+vz1*dt # Neue Position der Masse 1 auf der Z Achse
+        z2=z2+vz2*dt # Neue Position der Masse 2 auf der Z Achse
+        z3=z3+vz3*dt # Neue Position der Masse 3 auf der Z Achse
+        
+        X1_Achse.append(x1)
+        X2_Achse.append(x2)
+        X3_Achse.append(x3)
+        Y1_Achse.append(y1)
+        Y2_Achse.append(y2)
+        Y3_Achse.append(y3)
+        Z1_Achse.append(z1)
+        Z2_Achse.append(z2)
+        Z3_Achse.append(z3)
+        
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')    
+plt.plot(X1_Achse, Y1_Achse, Z1_Achse, label="erde", color="blue")
+plt.plot(X2_Achse, Y2_Achse, Z2_Achse, label="ich", color="red")
+plt.plot(X3_Achse, Y3_Achse, Z3_Achse, label="iss", color="green")
+plt.axhline(0, color="black", linewidth=0.5)
+plt.axvline(0, color="black", linewidth=0.5)
+plt.title("several-body-problem")
+plt.xlabel("X (m)")
+plt.ylabel("Y (m)")
+ax.set_zlabel('Z (m)')
+plt.gca().axis("equal")
+plt.grid()
+plt.legend()
+plt.show()
+
+
+
+
